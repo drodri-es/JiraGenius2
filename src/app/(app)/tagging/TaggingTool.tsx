@@ -62,7 +62,7 @@ function ResultsTable({ results, onUpdate }: { results: TaggingResult[], onUpdat
                             <TableCell>
                                <div className="flex flex-wrap gap-1">
                                     {result.suggestedTags.map(tag => (
-                                        <Badge key={tag} variant="outline" className="bg-primary/10 border-primary/40 text-primary">{tag}</Badge>
+                                        <Badge key={tag} variant="default">{tag}</Badge>
                                     ))}
                                 </div>
                             </TableCell>
