@@ -30,25 +30,41 @@ function JiraIssueDescription({ description }: { description: JiraIssue['fields'
     if (!description) {
         return <p className="text-muted-foreground">No description provided.</p>;
     }
+    
+    // Handle simple string descriptions
     if (typeof description === 'string') {
         return <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{description}</p>;
     }
-    if (description?.type === 'doc') {
-        const renderContent = (content: any[]) => {
-            return content.map((node, index) => {
-                if (node.type === 'paragraph') {
-                    return (
-                        <p key={index} className="text-foreground/80 leading-relaxed mb-4">
-                            {node.content?.map((textNode: any) => textNode.text).join('') || ''}
-                        </p>
-                    );
+
+    // Handle Atlassian Document Format
+    if (description?.type === 'doc' && Array.isArray(description.content)) {
+        const renderNode = (node: any, index: number): React.ReactNode => {
+            if (node.type === 'paragraph') {
+                return (
+                    <p key={index} className="text-foreground/80 leading-relaxed mb-4">
+                        {node.content?.map(renderNode) || ''}
+                    </p>
+                );
+            }
+            if (node.type === 'text') {
+                let textElement: React.ReactNode = node.text;
+                if (node.marks) {
+                    node.marks.forEach((mark: any) => {
+                        if (mark.type === 'strong') {
+                            textElement = <strong>{textElement}</strong>;
+                        }
+                    });
                 }
-                return null;
-            });
+                return textElement;
+            }
+            // Add rendering for other node types here (e.g., lists, headings)
+            return null;
         };
-        return <div>{renderContent(description.content)}</div>;
+
+        return <div>{description.content.map(renderNode)}</div>;
     }
-    return <p className="text-muted-foreground">Description format not supported.</p>;
+
+    return <p className="text-muted-foreground">Description format not supported or empty.</p>;
 }
 
 const issueTypeIcons: Record<string, React.ReactNode> = {
