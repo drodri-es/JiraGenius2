@@ -8,8 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, XCircle, ShieldQuestion } from 'lucide-react';
-import { useEffect } from 'react';
+import { Loader2, CheckCircle, XCircle, ShieldQuestion, Eye, EyeOff } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const formSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL.' }),
@@ -19,6 +19,7 @@ const formSchema = z.object({
 
 export function JiraConnectionForm() {
   const { status, credentials, connect } = useJiraConnection();
+  const [showToken, setShowToken] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,9 +93,24 @@ export function JiraConnectionForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>API Token</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="Your Atlassian API Token" {...field} />
-                </FormControl>
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      type={showToken ? 'text' : 'password'}
+                      placeholder="Your Atlassian API Token"
+                      {...field}
+                      className="pr-10"
+                    />
+                  </FormControl>
+                  <button
+                    type="button"
+                    onClick={() => setShowToken(!showToken)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                    aria-label={showToken ? 'Hide token' : 'Show token'}
+                  >
+                    {showToken ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
