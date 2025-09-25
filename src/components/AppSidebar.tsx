@@ -9,14 +9,14 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { status, disconnect } = useJiraConnection();
+  const { disconnect } = useJiraConnection();
 
   const menuItems = [
     { href: '/dashboard', label: 'Projects', icon: Briefcase },
@@ -24,6 +24,7 @@ export function AppSidebar() {
     { href: '/routing', label: 'Routing Tool', icon: BotMessageSquare },
     { href: '/clustering', label: 'Clustering', icon: Layers },
     { href: '/classification', label: 'Classification', icon: Tag },
+    { href: '/capacity-forecast', label: 'Capacity Forecast', icon: BarChart },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
@@ -54,11 +55,9 @@ export function AppSidebar() {
         ))}
       </SidebarMenu>
       <SidebarFooter>
-        {status === 'connected' && (
-          <Button variant="ghost" onClick={disconnect} className="w-full justify-start">
-            Disconnect
-          </Button>
-        )}
+        <Button variant="ghost" onClick={disconnect} className="w-full justify-start">
+          Disconnect
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

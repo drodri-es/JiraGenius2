@@ -31,15 +31,32 @@ export interface JiraIssue {
     } | string | null;
     created: string;
     updated: string;
+    // Story Points is a custom field. The key might vary between Jira instances.
+    customfield_10026?: number;
   }
 }
 
 export interface JiraProject {
   id: string;
   key: string;
-  name: string;
+  name:string;
   avatarUrls: {
     '48x48': string;
   };
   projectTypeKey: string;
+}
+
+export interface JiraSprint {
+    id: number;
+    name: string;
+    state: 'active' | 'closed' | 'future';
+    startDate?: string;
+    endDate?: string;
+    completeDate?: string;
+}
+
+export interface SprintReport {
+    sprintName: string;
+    completedIssues: number;
+    totalStoryPoints: number;
 }
