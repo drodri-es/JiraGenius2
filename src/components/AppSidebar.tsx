@@ -7,8 +7,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat } from 'lucide-react';
@@ -62,26 +60,26 @@ export function AppSidebar() {
           </SidebarMenuItem>
         ))}
 
-        <div className="px-2 py-1">
-          <div className="h-8 flex items-center">
-            <span className="text-xs font-medium text-sidebar-foreground/70 flex items-center gap-2 pl-2"><BrainCircuit size={16}/> AI Tools</span>
-          </div>
+        <div className="px-4 pt-4 pb-2">
+            <span className="text-xs font-semibold text-sidebar-foreground/70 flex items-center gap-2"><BrainCircuit size={16}/> AI Tools</span>
         </div>
-
-        {aiToolsMenuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                asChild
-                isActive={pathname.startsWith(item.href)}
-                tooltip={item.label}
-                >
-                <Link href={item.href}>
-                    <item.icon />
-                    <span>{item.label}</span>
-                </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        ))}
+        
+        <div className="px-2">
+            {aiToolsMenuItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.href)}
+                    tooltip={item.label}
+                    >
+                    <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.label}</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            ))}
+        </div>
 
         <SidebarMenuItem className="mt-auto">
             <SidebarMenuButton
