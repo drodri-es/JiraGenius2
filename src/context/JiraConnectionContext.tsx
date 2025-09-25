@@ -44,33 +44,18 @@ export const JiraConnectionProvider = ({ children }: { children: ReactNode }) =>
     // Simulate API call to verify credentials
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Simulate success/failure
-    if (creds.url.includes('jira') && creds.token.length > 10) {
-      setStatus('connected');
-      setCredentials(creds);
-      try {
-        localStorage.setItem('jiraCredentials', JSON.stringify(creds));
-      } catch (error) {
-        console.error('Failed to save Jira credentials to localStorage', error);
-      }
-      toast({
-        title: 'Connection Successful',
-        description: 'Successfully connected to your Jira instance.',
-      });
-    } else {
-      setStatus('error');
-      setCredentials(null);
-      try {
-        localStorage.removeItem('jiraCredentials');
-      } catch (error) {
-        console.error('Failed to remove Jira credentials from localStorage', error);
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Connection Failed',
-        description: 'Please check your Jira URL and API token.',
-      });
+    // Always succeed
+    setStatus('connected');
+    setCredentials(creds);
+    try {
+      localStorage.setItem('jiraCredentials', JSON.stringify(creds));
+    } catch (error) {
+      console.error('Failed to save Jira credentials to localStorage', error);
     }
+    toast({
+      title: 'Connection Successful',
+      description: 'Successfully connected to your Jira instance.',
+    });
   }, [toast]);
 
   const disconnect = useCallback(() => {
