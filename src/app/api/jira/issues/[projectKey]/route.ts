@@ -15,13 +15,19 @@ export async function POST(
         return NextResponse.json({ message: 'Missing project key' }, { status: 400 });
     }
 
-    const auth = Buffer.from(`${email}:${token}`).toString('base64');
+    // A single issue key can be passed instead of a project key.
+    // We can use a different JQL query for that.
+    const isSingleIssue = projectKey.includes('-');
+
+    const jql = isSingleIssue 
+        ? `id = "${projectKey}"` 
+        : `project = "${projectKey}" ORDER BY updated DESC`;
     
-    // Use JQL to search for issues in the specified project
-    const jql = `project = "${projectKey}" ORDER BY updated DESC`;
+    const fields = 'summary,status,issuetype,priority,assignee,updated,created,description';
+    
     const searchParams = new URLSearchParams({
         jql,
-        fields: 'summary,status,issuetype,priority,assignee,updated,created',
+        fields,
     });
 
     const response = await fetch(`${url}/rest/api/3/search?${searchParams.toString()}`, {
@@ -39,6 +45,11 @@ export async function POST(
     }
 
     const data = await response.json();
+    
+    if (isSingleIssue) {
+        return NextResponse.json(data.issues[0]);
+    }
+
     return NextResponse.json(data.issues);
   } catch (error) {
     console.error(`Failed to fetch Jira issues for project ${params.projectKey}`, error);
