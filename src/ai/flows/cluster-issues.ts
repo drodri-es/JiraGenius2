@@ -11,12 +11,12 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const IssueSchema = z.object({
+const IssueSchema = z.object({
   key: z.string().describe('The unique key of the issue (e.g., PROJ-123).'),
   summary: z.string().describe('The summary or title of the issue.'),
 });
 
-export const ClusterIssuesInputSchema = z.object({
+const ClusterIssuesInputSchema = z.object({
   issues: z.array(IssueSchema).describe('The list of issues to cluster.'),
 });
 export type ClusterIssuesInput = z.infer<typeof ClusterIssuesInputSchema>;
@@ -27,7 +27,7 @@ const ClusterSchema = z.object({
   issueKeys: z.array(z.string()).describe('An array of issue keys belonging to this cluster.'),
 });
 
-export const ClusterIssuesOutputSchema = z.object({
+const ClusterIssuesOutputSchema = z.object({
   clusters: z.array(ClusterSchema).describe('An array of issue clusters.'),
 });
 export type ClusterIssuesOutput = z.infer<typeof ClusterIssuesOutputSchema>;
