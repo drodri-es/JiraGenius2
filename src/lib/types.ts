@@ -4,18 +4,18 @@ export type IssuePriority = 'Highest' | 'High' | 'Medium' | 'Low';
 
 export interface JiraIssue {
   id: string;
-  key: string; // Added key field
+  key: string; 
   fields: {
     summary: string;
     issuetype: {
-      name: IssueType;
+      name: string;
       iconUrl: string;
     };
     status: {
-      name: IssueStatus;
+      name: string;
     };
     priority: {
-      name: IssuePriority;
+      name: string;
       iconUrl: string;
     };
     assignee: {
