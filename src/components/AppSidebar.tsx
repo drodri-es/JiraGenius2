@@ -9,7 +9,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat, FilePenLine } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
@@ -30,6 +30,7 @@ export function AppSidebar() {
     { href: '/tagging', label: 'Tagging', icon: Tags },
     { href: '/capacity-forecast', label: 'Capacity Forecast', icon: BarChart },
     { href: '/incident-recurrence', label: 'Incident Recurrence', icon: Repeat },
+    { href: '/story-assistance', label: 'Story Assistance', icon: FilePenLine },
   ];
 
   const settingsMenuItem = { href: '/settings', label: 'Settings', icon: Settings };
@@ -49,7 +50,7 @@ export function AppSidebar() {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname.startsWith(item.href) && (item.href !== '/' && item.href !== '/issues')}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/' && item.href !== '/issues' || pathname === item.href)}
               tooltip={item.label}
             >
               <Link href={item.href}>
