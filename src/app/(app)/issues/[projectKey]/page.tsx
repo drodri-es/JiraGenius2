@@ -14,13 +14,15 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
   const [issues, setIssues] = useState<JiraIssue[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  // Store projectKey in state to avoid direct access to params in effects and render
+  const [projectKey] = useState(params.projectKey);
 
   useEffect(() => {
     async function getIssues() {
       if (status === 'connected' && credentials) {
         setIsLoading(true);
         try {
-          const response = await fetch(`/api/jira/issues/${params.projectKey}`, {
+          const response = await fetch(`/api/jira/issues/${projectKey}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -55,7 +57,7 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
     if (status !== 'connecting') {
       getIssues();
     }
-  }, [status, credentials, params.projectKey, toast]);
+  }, [status, credentials, projectKey, toast]);
 
   if (status === 'disconnected' || status === 'error') {
     return (
@@ -75,7 +77,7 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
 
   return (
     <div className="p-4 md:p-8">
-      <h1 className="text-3xl font-headline font-bold mb-6">Issues for <span className="text-primary">{params.projectKey}</span></h1>
+      <h1 className="text-3xl font-headline font-bold mb-6">Issues for <span className="text-primary">{projectKey}</span></h1>
       {isLoading || status === 'connecting' ? <IssuesLoading /> : <IssueList issues={issues} />}
     </div>
   );
