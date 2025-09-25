@@ -21,6 +21,7 @@ export function AppSidebar() {
   const mainMenuItems = [
     { href: '/dashboard', label: 'Projects', icon: Briefcase },
     { href: '/issues', label: 'Issues', icon: LayoutDashboard },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   const aiToolsMenuItems = [
@@ -32,8 +33,6 @@ export function AppSidebar() {
     { href: '/incident-recurrence', label: 'Incident Recurrence', icon: Repeat },
     { href: '/story-assistance', label: 'Story Assistance', icon: FilePenLine },
   ];
-
-  const settingsMenuItem = { href: '/settings', label: 'Settings', icon: Settings };
 
   return (
     <Sidebar>
@@ -62,9 +61,11 @@ export function AppSidebar() {
         ))}
 
         <SidebarMenuItem>
-          <div className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8">
-            <BrainCircuit className="h-4 w-4" />
-            <span className="text-sm">AI Tools</span>
+          <div
+            className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm"
+          >
+            <BrainCircuit className="h-4 w-4 shrink-0" />
+            <span className="truncate">AI Tools</span>
           </div>
         </SidebarMenuItem>
         
@@ -87,16 +88,6 @@ export function AppSidebar() {
         </div>
 
         <SidebarMenuItem className="mt-auto">
-            <SidebarMenuButton
-                asChild
-                isActive={pathname.startsWith(settingsMenuItem.href)}
-                tooltip={settingsMenuItem.label}
-            >
-                <Link href={settingsMenuItem.href}>
-                <settingsMenuItem.icon />
-                <span>{settingsMenuItem.label}</span>
-                </Link>
-            </SidebarMenuButton>
         </SidebarMenuItem>
 
       </SidebarMenu>
