@@ -16,3 +16,13 @@ export interface JiraIssue {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface JiraProject {
+  id: string;
+  key: string;
+  name: string;
+  avatarUrls: {
+    '48x48': string;
+  };
+  projectTypeKey: string;
+}

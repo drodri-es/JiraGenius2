@@ -1,4 +1,4 @@
-import type { JiraIssue } from './types';
+import type { JiraIssue, JiraProject } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const mockIssues: JiraIssue[] = [
@@ -81,8 +81,7 @@ export const mockIssues: JiraIssue[] = [
     id: 'PROJ-128',
     title: 'Update documentation for the new API version',
     type: 'Task',
-    status: 'To Do',
-    priority: 'Low',
+    status: 'Low',
     assignee: {
       name: 'Eve Adams',
       avatarUrl: PlaceHolderImages.find(p => p.id === 'avatar5')?.imageUrl || `https://picsum.photos/seed/5/32/32`,
@@ -93,6 +92,38 @@ export const mockIssues: JiraIssue[] = [
     updatedAt: '2023-10-28T16:00:00Z',
   },
 ];
+
+export const mockProjects: JiraProject[] = [
+  {
+    id: '10000',
+    key: 'PROJ',
+    name: 'JiraGenius AI App',
+    avatarUrls: { '48x48': 'https://picsum.photos/seed/project1/48/48' },
+    projectTypeKey: 'software',
+  },
+  {
+    id: '10001',
+    key: 'WEB',
+    name: 'Company Website',
+    avatarUrls: { '48x48': 'https://picsum.photos/seed/project2/48/48' },
+    projectTypeKey: 'business',
+  },
+  {
+    id: '10002',
+    key: 'MOB',
+    name: 'Mobile App Refresh',
+    avatarUrls: { '48x48': 'https://picsum.photos/seed/project3/48/48' },
+    projectTypeKey: 'software',
+  },
+  {
+    id: '10003',
+    key: 'DS',
+    name: 'Design System',
+    avatarUrls: { '48x48': 'https://picsum.photos/seed/project4/48/48' },
+    projectTypeKey: 'software',
+  },
+];
+
 
 export const fetchJiraIssues = async (): Promise<JiraIssue[]> => {
   // In a real app, you would use credentials to fetch from Jira API
@@ -109,5 +140,13 @@ export const fetchJiraIssue = async (id: string): Promise<JiraIssue | undefined>
     setTimeout(() => {
       resolve(mockIssues.find(issue => issue.id === id));
     }, 500);
+  });
+};
+
+export const fetchJiraProjects = async (): Promise<JiraProject[]> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(mockProjects);
+    }, 1000);
   });
 };
