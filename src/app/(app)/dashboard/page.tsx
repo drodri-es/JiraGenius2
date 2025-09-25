@@ -8,25 +8,53 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Settings } from 'lucide-react';
 import DashboardLoading from './loading';
-import { fetchJiraProjects } from '@/lib/mock-data';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
-  const { status } = useJiraConnection();
+  const { status, credentials } = useJiraConnection();
   const [projects, setProjects] = useState<JiraProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (status === 'connected') {
-      setIsLoading(true);
-      fetchJiraProjects().then(data => {
-        setProjects(data);
+    async function getProjects() {
+      if (status === 'connected' && credentials) {
+        setIsLoading(true);
+        try {
+          const response = await fetch('/api/jira/projects', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to fetch projects');
+          }
+
+          const data = await response.json();
+          setProjects(data);
+        } catch (error) {
+          console.error(error);
+          toast({
+            variant: 'destructive',
+            title: 'Error fetching projects',
+            description: error instanceof Error ? error.message : 'An unknown error occurred.',
+          });
+          setProjects([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
         setIsLoading(false);
-      });
-    } else {
-      setIsLoading(false);
-      setProjects([]);
+        setProjects([]);
+      }
     }
-  }, [status]);
+
+    getProjects();
+  }, [status, credentials, toast]);
 
   if (status === 'disconnected' || status === 'error') {
     return (
