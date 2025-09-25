@@ -138,6 +138,8 @@ export function ClassificationTool() {
       setIsIssuesLoading(false);
     }
   };
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   
   const handleAnalyze = async () => {
     if (issues.length === 0) {
@@ -168,12 +170,16 @@ export function ClassificationTool() {
                 actualType: issue.fields.issuetype.name,
                 matches: result.classification === normalizedJiraType
             });
+            // Add the current results to the state to show progress
+            setClassificationResults([...results]);
+            
+            // Wait for 6 seconds to avoid hitting rate limits
+            await sleep(6000);
         }
-        setClassificationResults(results);
 
     } catch (e) {
         console.error(e);
-        toast({ variant: 'destructive', title: 'Classification Failed', description: 'An error occurred while analyzing the issues.' });
+        toast({ variant: 'destructive', title: 'Classification Failed', description: 'An error occurred while analyzing the issues. This might be due to API rate limits.' });
     } finally {
         setIsClassifying(false);
     }
@@ -218,7 +224,7 @@ export function ClassificationTool() {
         </Card>
       )}
       
-      {isClassifying && <IssuesLoading />}
+      {isClassifying && classificationResults.length === 0 && <IssuesLoading />}
 
       {classificationResults.length > 0 && selectedProject && (
         <Card>
@@ -226,6 +232,7 @@ export function ClassificationTool() {
                 <CardTitle>Classification Results</CardTitle>
                 <CardDescription>
                     The table below shows the AI's classification compared to the actual issue type. Mismatches are highlighted in red.
+                    {isClassifying && ` (Analyzing... ${classificationResults.length} of ${issues.length})`}
                 </CardDescription>
             </CardHeader>
             <CardContent>
