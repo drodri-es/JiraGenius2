@@ -7,3 +7,4 @@ import '@/ai/flows/summarize-issue-description.ts';
 import '@/ai/flows/cluster-issues.ts';
 import '@/ai/flows/classify-issue.ts';
 import '@/ai/flows/sprint-capacity-forecasting.ts';
+import '@/ai/flows/suggest-issue-tags.ts';

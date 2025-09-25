@@ -23,7 +23,7 @@ export async function POST(
 
     if (isSingleIssue) {
         const jql = `id = "${projectKey}"`;
-        const fields = 'summary,status,issuetype,priority,assignee,updated,created,description';
+        const fields = 'summary,status,issuetype,priority,assignee,updated,created,description,labels';
         const searchParams = new URLSearchParams({ jql, fields });
 
         const response = await fetch(`${url}/rest/api/3/search?${searchParams.toString()}`, {
@@ -58,7 +58,7 @@ export async function POST(
 
     // 2. Fetch Issues for the Project
     const jql = `project = "${projectKey}" ORDER BY updated DESC`;
-    const fields = 'summary,status,issuetype,priority,assignee,updated,created,description';
+    const fields = 'summary,status,issuetype,priority,assignee,updated,created,description,labels';
     const searchParams = new URLSearchParams({ jql, fields });
 
     const issuesResponse = await fetch(`${url}/rest/api/3/search?${searchParams.toString()}`, {
@@ -86,4 +86,57 @@ export async function POST(
     }
     return NextResponse.json({ message: 'An unknown error occurred' }, { status: 500 });
   }
+}
+
+export async function PUT(
+    request: Request,
+    { params }: { params: { projectKey: string } }
+) {
+    try {
+        const { url, email, token, labels } = await request.json();
+        const issueKey = params.projectKey;
+
+        if (!url || !email || !token) {
+            return NextResponse.json({ message: 'Missing Jira credentials' }, { status: 400 });
+        }
+        if (!issueKey) {
+            return NextResponse.json({ message: 'Missing issue key' }, { status: 400 });
+        }
+        if (!labels || !Array.isArray(labels)) {
+            return NextResponse.json({ message: 'Labels must be an array' }, { status: 400 });
+        }
+        
+        const auth = Buffer.from(`${email}:${token}`).toString('base64');
+        const body = JSON.stringify({
+            fields: {
+                labels: labels,
+            },
+        });
+
+        const response = await fetch(`${url}/rest/api/3/issue/${issueKey}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Basic ${auth}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: body,
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Jira API Error (PUT ${issueKey}):`, errorText);
+            return NextResponse.json({ message: `Failed to update issue ${issueKey}`, details: errorText }, { status: response.status });
+        }
+
+        // Jira PUT returns 204 No Content on success
+        return new NextResponse(null, { status: 204 });
+
+    } catch (error) {
+        console.error(`Failed to update Jira issue`, error);
+        if (error instanceof Error) {
+            return NextResponse.json({ message: 'Failed to update Jira issue', error: error.message }, { status: 500 });
+        }
+        return NextResponse.json({ message: 'An unknown error occurred' }, { status: 500 });
+    }
 }

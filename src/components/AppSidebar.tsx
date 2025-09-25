@@ -9,7 +9,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
@@ -24,6 +24,7 @@ export function AppSidebar() {
     { href: '/routing', label: 'Routing Tool', icon: BotMessageSquare },
     { href: '/clustering', label: 'Clustering', icon: Layers },
     { href: '/classification', label: 'Classification', icon: Tag },
+    { href: '/tagging', label: 'Tagging', icon: Tags },
     { href: '/capacity-forecast', label: 'Capacity Forecast', icon: BarChart },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];

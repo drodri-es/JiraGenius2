@@ -33,6 +33,7 @@ export interface JiraIssue {
     updated: string;
     // Story Points is a custom field. The key might vary between Jira instances.
     customfield_10026?: number;
+    labels: string[];
   }
 }
 
