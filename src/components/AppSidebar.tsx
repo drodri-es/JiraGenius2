@@ -9,7 +9,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Settings, BotMessageSquare, Github } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
@@ -19,7 +19,8 @@ export function AppSidebar() {
   const { status, disconnect } = useJiraConnection();
 
   const menuItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard', label: 'Projects', icon: Briefcase },
+    { href: '/issues', label: 'Issues', icon: LayoutDashboard },
     { href: '/routing', label: 'Routing Tool', icon: BotMessageSquare },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
@@ -39,7 +40,7 @@ export function AppSidebar() {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname === item.href}
+              isActive={pathname.startsWith(item.href)}
               tooltip={item.label}
             >
               <Link href={item.href}>

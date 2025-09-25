@@ -16,7 +16,7 @@ const projectTypeIcons: Record<string, React.ReactNode> = {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Link href={`/dashboard`} className="block h-full">
+    <Link href={`/issues/${project.key}`} className="block h-full">
       <Card className="h-full flex flex-col hover:border-accent transition-colors duration-200">
         <CardHeader className="flex-row items-center gap-4 space-y-0">
           <Avatar className="h-12 w-12 rounded-md">
