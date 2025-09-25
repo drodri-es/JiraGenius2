@@ -29,44 +29,71 @@ import IssueDetailLoading from './loading';
 import Link from 'next/link';
 
 function JiraIssueDescription({ description }: { description: JiraIssue['fields']['description'] }) {
-    if (!description) {
-        return <p className="text-muted-foreground">No description provided.</p>;
-    }
-    
-    // Handle simple string descriptions
-    if (typeof description === 'string') {
-        return <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{description}</p>;
-    }
+  if (!description) {
+      return <p className="text-muted-foreground">No description provided.</p>;
+  }
 
-    // Handle Atlassian Document Format
-    if (description?.type === 'doc' && Array.isArray(description.content)) {
-        const renderNode = (node: any, index: number): React.ReactNode => {
-            if (node.type === 'paragraph') {
-                return (
-                    <p key={index} className="text-foreground/80 leading-relaxed mb-4">
-                        {node.content?.map(renderNode) || ''}
-                    </p>
-                );
-            }
-            if (node.type === 'text') {
-                let textElement: React.ReactNode = node.text;
-                if (node.marks) {
-                    node.marks.forEach((mark: any) => {
-                        if (mark.type === 'strong') {
-                            textElement = <strong>{textElement}</strong>;
-                        }
-                    });
-                }
-                return textElement;
-            }
-            // Add rendering for other node types here (e.g., lists, headings)
-            return null;
-        };
+  if (typeof description === 'string') {
+      return <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{description}</p>;
+  }
 
-        return <div>{description.content.map(renderNode)}</div>;
-    }
+  if (description?.type === 'doc' && Array.isArray(description.content)) {
+      const renderNode = (node: any, index: number): React.ReactNode => {
+          switch (node.type) {
+              case 'paragraph':
+                  return (
+                      <p key={index} className="text-foreground/80 leading-relaxed mb-4">
+                          {node.content?.map(renderNode) || ''}
+                      </p>
+                  );
+              case 'heading':
+                  const Tag = `h${node.attrs.level}` as keyof JSX.IntrinsicElements;
+                  return (
+                      <Tag key={index} className="text-xl font-bold my-4">
+                          {node.content?.map(renderNode) || ''}
+                      </Tag>
+                  );
+              case 'text':
+                  let textElement: React.ReactNode = node.text;
+                  if (node.marks) {
+                      node.marks.forEach((mark: any) => {
+                          switch (mark.type) {
+                              case 'strong':
+                                  textElement = <strong>{textElement}</strong>;
+                                  break;
+                              case 'em':
+                                  textElement = <em>{textElement}</em>;
+                                  break;
+                              case 'underline':
+                                  textElement = <u>{textElement}</u>;
+                                  break;
+                              case 'code':
+                                  textElement = <code className="bg-muted text-foreground p-1 rounded text-sm font-mono">{textElement}</code>;
+                                  break;
+                          }
+                      });
+                  }
+                  return textElement;
+              case 'bulletList':
+                  return <ul key={index} className="list-disc pl-5 space-y-2 mb-4">{node.content?.map(renderNode)}</ul>;
+              case 'orderedList':
+                  return <ol key={index} className="list-decimal pl-5 space-y-2 mb-4">{node.content?.map(renderNode)}</ol>;
+              case 'listItem':
+                  return <li key={index} className="text-foreground/80 leading-relaxed">{node.content?.map(renderNode)}</li>;
+              case 'rule':
+                  return <Separator key={index} className="my-6" />;
+              default:
+                  if(node.content) {
+                      return node.content.map(renderNode);
+                  }
+                  return null;
+          }
+      };
 
-    return <p className="text-muted-foreground">Description format not supported or empty.</p>;
+      return <div>{description.content.map(renderNode)}</div>;
+  }
+
+  return <p className="text-muted-foreground">Description format not supported or empty.</p>;
 }
 
 const issueTypeIcons: Record<string, React.ReactNode> = {
