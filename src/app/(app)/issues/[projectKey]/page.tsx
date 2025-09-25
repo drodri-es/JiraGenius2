@@ -15,11 +15,9 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
   const [project, setProject] = useState<JiraProject | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  // Store projectKey in state to avoid direct access to params in effects and render
-  const [projectKey] = useState(params.projectKey);
 
   useEffect(() => {
-    async function getIssuesAndProject() {
+    async function getIssuesAndProject(projectKey: string) {
       if (status === 'connected' && credentials) {
         setIsLoading(true);
         try {
@@ -60,9 +58,9 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
     }
 
     if (status !== 'connecting') {
-      getIssuesAndProject();
+      getIssuesAndProject(params.projectKey);
     }
-  }, [status, credentials, projectKey, toast]);
+  }, [status, credentials, params.projectKey, toast]);
 
   if (status === 'disconnected' || status === 'error') {
     return (
@@ -80,7 +78,7 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
     );
   }
   
-  const pageTitle = project ? project.name : projectKey;
+  const pageTitle = project ? project.name : params.projectKey;
 
   return (
     <div className="p-4 md:p-8">
