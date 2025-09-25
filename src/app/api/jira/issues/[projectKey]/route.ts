@@ -15,6 +15,8 @@ export async function POST(
         return NextResponse.json({ message: 'Missing project key' }, { status: 400 });
     }
 
+    const auth = Buffer.from(`${email}:${token}`).toString('base64');
+
     // A single issue key can be passed instead of a project key.
     // We can use a different JQL query for that.
     const isSingleIssue = projectKey.includes('-');
