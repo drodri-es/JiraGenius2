@@ -1,18 +1,17 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { IssuesSelector } from './IssuesSelector';
 
 export default function IssuesPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)] text-center p-4">
-      <h2 className="text-2xl font-headline font-semibold mb-2">Select a Project</h2>
-      <p className="max-w-md text-muted-foreground mb-6">
-        Please select a project from the Projects page to view its issues.
-      </p>
-      <Button asChild>
-        <Link href="/dashboard">
-          Go to Projects
-        </Link>
-      </Button>
+    <div className="container mx-auto p-4 md:p-8">
+      <div className="max-w-2xl mx-auto">
+        <header className="mb-8 text-center">
+          <h1 className="text-3xl font-headline font-bold">Select a Project</h1>
+          <p className="text-muted-foreground mt-2">
+            Please choose a project from the list below to view its issues.
+          </p>
+        </header>
+        <IssuesSelector />
+      </div>
     </div>
   );
 }
