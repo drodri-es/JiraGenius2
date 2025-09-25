@@ -2,6 +2,7 @@
 
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUp,
   Book,
@@ -25,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import type { JiraIssue } from '@/lib/types';
 import IssueDetailLoading from './loading';
+import Link from 'next/link';
 
 function JiraIssueDescription({ description }: { description: JiraIssue['fields']['description'] }) {
     if (!description) {
@@ -139,85 +141,93 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
           (p: any) => p.content?.map((t: any) => t.text).join('') || ''
         ).join('\n') || '';
 
+    const projectKey = issue.key.split('-')[0];
+
     return (
       <div className="p-4 md:p-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-grow max-w-full lg:max-w-4xl">
-            <header className="mb-6">
-              <p className="text-muted-foreground mb-2">{issue.key}</p>
-              <h1 className="text-3xl lg:text-4xl font-headline font-bold">{issue.fields.summary}</h1>
-            </header>
+        <div className="max-w-7xl mx-auto">
+          <Link href={`/issues/${projectKey}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
+            <ArrowLeft className="h-4 w-4" />
+            Back to project issues
+          </Link>
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-grow max-w-full lg:max-w-4xl">
+              <header className="mb-6">
+                <p className="text-muted-foreground mb-2">{issue.key}</p>
+                <h1 className="text-3xl lg:text-4xl font-headline font-bold">{issue.fields.summary}</h1>
+              </header>
 
-            <div className="mt-8">
-              <h2 className="font-headline text-2xl font-semibold mb-4 border-b pb-2">Description</h2>
-              <JiraIssueDescription description={issue.fields.description} />
+              <div className="mt-8">
+                <h2 className="font-headline text-2xl font-semibold mb-4 border-b pb-2">Description</h2>
+                <JiraIssueDescription description={issue.fields.description} />
+              </div>
             </div>
-          </div>
 
-          <aside className="w-full lg:w-80 lg:flex-shrink-0 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-headline">Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Status</span>
-                  <Badge variant="outline" className="flex items-center gap-2">
-                    {issueStatusIcons[issue.fields.status.name]}
-                    <span>{issue.fields.status.name}</span>
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Priority</span>
-                  <div className="flex items-center gap-2">
-                    {issuePriorityIcons[issue.fields.priority.name]}
-                    <span>{issue.fields.priority.name}</span>
+            <aside className="w-full lg:w-80 lg:flex-shrink-0 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-headline">Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Status</span>
+                    <Badge variant="outline" className="flex items-center gap-2">
+                      {issueStatusIcons[issue.fields.status.name]}
+                      <span>{issue.fields.status.name}</span>
+                    </Badge>
                   </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Type</span>
-                  <div className="flex items-center gap-2">
-                    {issueTypeIcons[issue.fields.issuetype.name]}
-                    <span>{issue.fields.issuetype.name}</span>
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <User size={16} />
-                    Assignee
-                  </span>
-                  {issue.fields.assignee ? (
-                      <div className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src={issue.fields.assignee.avatarUrls['48x48']} alt={issue.fields.assignee.displayName} />
-                        <AvatarFallback>{issue.fields.assignee.displayName.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span>{issue.fields.assignee.displayName}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Priority</span>
+                    <div className="flex items-center gap-2">
+                      {issuePriorityIcons[issue.fields.priority.name]}
+                      <span>{issue.fields.priority.name}</span>
                     </div>
-                  ) : (
-                      <span className="text-muted-foreground">Unassigned</span>
-                  )}
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Calendar size={16} />
-                    Created
-                  </span>
-                  <span>{formatDistanceToNow(new Date(issue.fields.created), { addSuffix: true })}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Clock size={16} />
-                    Updated
-                  </span>
-                  <span>{formatDistanceToNow(new Date(issue.fields.updated), { addSuffix: true })}</span>
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Type</span>
+                    <div className="flex items-center gap-2">
+                      {issueTypeIcons[issue.fields.issuetype.name]}
+                      <span>{issue.fields.issuetype.name}</span>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <User size={16} />
+                      Assignee
+                    </span>
+                    {issue.fields.assignee ? (
+                        <div className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={issue.fields.assignee.avatarUrls['48x48']} alt={issue.fields.assignee.displayName} />
+                          <AvatarFallback>{issue.fields.assignee.displayName.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <span>{issue.fields.assignee.displayName}</span>
+                      </div>
+                    ) : (
+                        <span className="text-muted-foreground">Unassigned</span>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Calendar size={16} />
+                      Created
+                    </span>
+                    <span>{formatDistanceToNow(new Date(issue.fields.created), { addSuffix: true })}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Clock size={16} />
+                      Updated
+                    </span>
+                    <span>{formatDistanceToNow(new Date(issue.fields.updated), { addSuffix: true })}</span>
+                  </div>
+                </CardContent>
+              </Card>
 
-            <AiToolsPanel issueDescription={descriptionText} />
-          </aside>
+              <AiToolsPanel issueDescription={descriptionText} />
+            </aside>
+          </div>
         </div>
       </div>
     );
