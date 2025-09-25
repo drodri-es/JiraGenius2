@@ -11,7 +11,7 @@ import {
   SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
@@ -31,6 +31,7 @@ export function AppSidebar() {
     { href: '/classification', label: 'Classification', icon: Tag },
     { href: '/tagging', label: 'Tagging', icon: Tags },
     { href: '/capacity-forecast', label: 'Capacity Forecast', icon: BarChart },
+    { href: '/incident-recurrence', label: 'Incident Recurrence', icon: Repeat },
   ];
 
   const settingsMenuItem = { href: '/settings', label: 'Settings', icon: Settings };
