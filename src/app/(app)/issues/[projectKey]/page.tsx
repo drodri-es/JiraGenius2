@@ -76,7 +76,7 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-headline font-bold mb-6">Issues for <span className="text-primary">{params.projectKey}</span></h1>
-      {isLoading ? <IssuesLoading /> : <IssueList issues={issues} />}
+      {isLoading || status === 'connecting' ? <IssuesLoading /> : <IssueList issues={issues} />}
     </div>
   );
 }
