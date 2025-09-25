@@ -1,7 +1,7 @@
 'use client';
 
 import { useJiraConnection } from '@/context/JiraConnectionContext';
-import type { JiraIssue } from '@/lib/types';
+import type { JiraIssue, JiraProject } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { IssueList } from './IssueList';
 import IssuesLoading from './IssuesLoading';
@@ -12,17 +12,19 @@ import { Button } from '@/components/ui/button';
 export default function ProjectIssuesPage({ params }: { params: { projectKey: string } }) {
   const { status, credentials } = useJiraConnection();
   const [issues, setIssues] = useState<JiraIssue[]>([]);
+  const [project, setProject] = useState<JiraProject | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   // Store projectKey in state to avoid direct access to params in effects and render
   const [projectKey] = useState(params.projectKey);
 
   useEffect(() => {
-    async function getIssues() {
+    async function getIssuesAndProject() {
       if (status === 'connected' && credentials) {
         setIsLoading(true);
         try {
-          const response = await fetch(`/api/jira/issues/${projectKey}`, {
+          // Fetch issues
+          const issuesResponse = await fetch(`/api/jira/issues/${projectKey}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -30,32 +32,35 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
             body: JSON.stringify(credentials),
           });
 
-          if (!response.ok) {
-            const errorData = await response.json();
+          if (!issuesResponse.ok) {
+            const errorData = await issuesResponse.json();
             throw new Error(errorData.message || 'Failed to fetch issues');
           }
 
-          const data = await response.json();
-          setIssues(data);
+          const issuesData = await issuesResponse.json();
+          setIssues(issuesData.issues);
+          setProject(issuesData.project);
         } catch (error) {
           console.error(error);
           toast({
             variant: 'destructive',
-            title: 'Error fetching issues',
+            title: 'Error fetching project data',
             description: error instanceof Error ? error.message : 'An unknown error occurred.',
           });
           setIssues([]);
+          setProject(null);
         } finally {
           setIsLoading(false);
         }
       } else {
         setIsLoading(false);
         setIssues([]);
+        setProject(null);
       }
     }
 
     if (status !== 'connecting') {
-      getIssues();
+      getIssuesAndProject();
     }
   }, [status, credentials, projectKey, toast]);
 
@@ -74,10 +79,12 @@ export default function ProjectIssuesPage({ params }: { params: { projectKey: st
       </div>
     );
   }
+  
+  const pageTitle = project ? project.name : projectKey;
 
   return (
     <div className="p-4 md:p-8">
-      <h1 className="text-3xl font-headline font-bold mb-6">Issues for <span className="text-primary">{projectKey}</span></h1>
+      <h1 className="text-3xl font-headline font-bold mb-6">Issues for <span className="text-primary">{pageTitle}</span></h1>
       {isLoading || status === 'connecting' ? <IssuesLoading /> : <IssueList issues={issues} />}
     </div>
   );
