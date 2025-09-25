@@ -39,10 +39,10 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/20 text-primary">
+            <div className="p-2 rounded-lg bg-accent/20 text-accent">
                 <Github />
             </div>
-            <h1 className="text-xl font-headline font-semibold">JiraGenius<span className="text-primary">2</span></h1>
+            <h1 className="text-xl font-headline font-semibold">JiraGenius<span className="text-accent">2</span></h1>
         </div>
       </SidebarHeader>
       <SidebarMenu>
