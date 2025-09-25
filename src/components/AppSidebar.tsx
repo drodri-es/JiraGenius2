@@ -49,7 +49,7 @@ export function AppSidebar() {
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild
-              isActive={pathname.startsWith(item.href) && item.href !== '/'}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/' && item.href !== '/issues')}
               tooltip={item.label}
             >
               <Link href={item.href}>
@@ -60,17 +60,21 @@ export function AppSidebar() {
           </SidebarMenuItem>
         ))}
 
-        <div className="px-4 pt-4 pb-2">
-            <span className="text-xs font-semibold text-sidebar-foreground/70 flex items-center gap-2"><BrainCircuit size={16}/> AI Tools</span>
-        </div>
+        <SidebarMenuItem>
+          <div className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm">
+            <BrainCircuit />
+            <span>AI Tools</span>
+          </div>
+        </SidebarMenuItem>
         
-        <div className="px-2">
+        <div className="flex flex-col pl-4">
             {aiToolsMenuItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                     asChild
                     isActive={pathname.startsWith(item.href)}
                     tooltip={item.label}
+                    className="h-8"
                     >
                     <Link href={item.href}>
                         <item.icon />
