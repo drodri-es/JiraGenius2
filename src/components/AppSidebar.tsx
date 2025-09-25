@@ -39,10 +39,10 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10 text-accent-foreground">
+            <div className="p-2 rounded-lg bg-primary/10 text-accent">
                 <Github />
             </div>
-            <h1 className="text-xl font-headline font-semibold">JiraGenius<span className="text-accent-foreground">2</span></h1>
+            <h1 className="text-xl font-headline font-semibold">JiraGenius<span className="text-accent">2</span></h1>
         </div>
       </SidebarHeader>
       <SidebarMenu>
@@ -62,9 +62,9 @@ export function AppSidebar() {
         ))}
 
         <SidebarMenuItem>
-          <div className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm h-8">
+          <div className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8">
             <BrainCircuit className="h-4 w-4" />
-            <span>AI Tools</span>
+            <span className="text-sm">AI Tools</span>
           </div>
         </SidebarMenuItem>
         
