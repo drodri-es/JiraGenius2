@@ -61,12 +61,10 @@ export function AppSidebar() {
         ))}
 
         <SidebarMenuItem>
-          <div
-            className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm"
-          >
-            <BrainCircuit className="h-4 w-4 shrink-0" />
-            <span className="truncate">AI Tools</span>
-          </div>
+            <div className="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm h-8">
+              <BrainCircuit className="h-4 w-4 shrink-0" />
+              <span className="truncate">AI Tools</span>
+            </div>
         </SidebarMenuItem>
         
         <div className="flex flex-col pl-4">
