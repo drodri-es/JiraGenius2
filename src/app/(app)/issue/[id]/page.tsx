@@ -119,13 +119,14 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
     const { credentials, status } = useJiraConnection();
     const [issue, setIssue] = React.useState<JiraIssue | null>(null);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [issueId] = React.useState(params.id);
 
     React.useEffect(() => {
         async function getIssue() {
             if (status === 'connected' && credentials) {
                 setIsLoading(true);
                 try {
-                    const response = await fetch(`/api/jira/issues/${params.id}`, {
+                    const response = await fetch(`/api/jira/issues/${issueId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(credentials),
@@ -147,7 +148,7 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
             }
         }
         getIssue();
-    }, [params.id, credentials, status]);
+    }, [issueId, credentials, status]);
     
     if (isLoading || status === 'connecting') {
         return <IssueDetailLoading />;
@@ -157,7 +158,7 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
       return (
         <div className="p-8 text-center text-muted-foreground">
           <h2>Issue not found</h2>
-          <p>The issue with key "{params.id}" could not be loaded or doesn't exist.</p>
+          <p>The issue with key "{issueId}" could not be loaded or doesn't exist.</p>
         </div>
       )
     }
