@@ -95,7 +95,7 @@ export function IncidentRecurrenceTool() {
       });
       if (!issuesResponse.ok) throw new Error('Failed to fetch issues');
       const issuesData = await issuesResponse.json();
-      setIssues(issuesData.issues);
+      setIssues(issuesData.issues || []);
     } catch (error) {
       toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch issues for the selected project.' });
     } finally {
