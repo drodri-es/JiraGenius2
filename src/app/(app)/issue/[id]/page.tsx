@@ -104,7 +104,7 @@ const issueTypeIcons: Record<string, React.ReactNode> = {
 
 const issuePriorityIcons: Record<string, React.ReactNode> = {
   Highest: <ArrowUp className="h-4 w-4 text-red-500" />,
-  High: <ArrowUp className="h-4 w-4 text-orange-400" />,
+  High: <ArrowUp className="h-4 w-4 text-red-500" />,
   Medium: <ArrowRight className="h-4 w-4 text-yellow-400" />,
   Low: <ArrowDown className="h-4 w-4 text-green-400" />,
 };
