@@ -1,3 +1,4 @@
+
 'use client';
 
 import { classifyIssue, type ClassifyIssueOutput } from '@/ai/flows/classify-issue';
@@ -159,9 +160,10 @@ export function ClassificationTool() {
 
             const result = await classifyIssue({ issueDescription: fullText });
             
-            // Jira has 'Bug', 'Story', 'Task', etc. Our AI classifies as 'Bug' or 'Feature'.
-            // Let's normalize Jira's types for comparison. Stories and Tasks are Features.
-            const normalizedJiraType = issue.fields.issuetype.name === 'Bug' ? 'Bug' : 'Feature';
+            // Jira has 'Bug', 'Story', 'Task', 'Error' etc. Our AI classifies as 'Bug' or 'Feature'.
+            // Let's normalize Jira's types for comparison. Bugs and Errors are Bugs. Stories and Tasks are Features.
+            const bugTypes = ['Bug', 'Error'];
+            const normalizedJiraType = bugTypes.includes(issue.fields.issuetype.name) ? 'Bug' : 'Feature';
 
             results.push({
                 ...result,

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { clusterIssues, type ClusterIssuesOutput } from '@/ai/flows/cluster-issues';
@@ -104,10 +105,11 @@ export function IncidentRecurrenceTool() {
   };
   
   const handleAnalyze = async () => {
-    const bugIssues = issues.filter(issue => issue.fields.issuetype.name === 'Bug');
+    const bugTypes = ['Bug', 'Error'];
+    const bugIssues = issues.filter(issue => bugTypes.includes(issue.fields.issuetype.name));
 
     if (bugIssues.length === 0) {
-        toast({ title: 'No bugs to analyze', description: 'The selected project has no issues of type "Bug" to analyze.' });
+        toast({ title: 'No bugs to analyze', description: 'The selected project has no issues of type "Bug" or "Error" to analyze.' });
         return;
     }
 
@@ -130,7 +132,8 @@ export function IncidentRecurrenceTool() {
     }
   }
 
-  const bugCount = issues.filter(issue => issue.fields.issuetype.name === 'Bug').length;
+  const bugTypes = ['Bug', 'Error'];
+  const bugCount = issues.filter(issue => bugTypes.includes(issue.fields.issuetype.name)).length;
 
   return (
     <div className="space-y-6">
@@ -159,7 +162,7 @@ export function IncidentRecurrenceTool() {
           <CardHeader>
             <CardTitle>2. Analyze Incidents</CardTitle>
             <CardDescription>
-              Click to analyze the {isIssuesLoading ? '' : `${bugCount} bugs`} from the <span className="font-semibold text-primary">{selectedProject.name}</span> project.
+              Click to analyze the {isIssuesLoading ? '' : `${bugCount} bugs/errors`} from the <span className="font-semibold text-primary">{selectedProject.name}</span> project.
             </CardDescription>
           </CardHeader>
           <CardContent>
