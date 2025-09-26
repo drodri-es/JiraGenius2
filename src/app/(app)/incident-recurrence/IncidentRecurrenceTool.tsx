@@ -104,8 +104,10 @@ export function IncidentRecurrenceTool() {
   };
   
   const handleAnalyze = async () => {
-    if (issues.length === 0) {
-        toast({ title: 'No issues to analyze', description: 'The selected project has no issues to analyze.' });
+    const bugIssues = issues.filter(issue => issue.fields.issuetype.name === 'Bug');
+
+    if (bugIssues.length === 0) {
+        toast({ title: 'No bugs to analyze', description: 'The selected project has no issues of type "Bug" to analyze.' });
         return;
     }
 
@@ -113,7 +115,7 @@ export function IncidentRecurrenceTool() {
     setClusteringResult(null);
 
     try {
-        const issuesToCluster = issues.map(issue => ({
+        const issuesToCluster = bugIssues.map(issue => ({
             key: issue.key,
             summary: issue.fields.summary
         }));
@@ -127,6 +129,8 @@ export function IncidentRecurrenceTool() {
         setIsClustering(false);
     }
   }
+
+  const bugCount = issues.filter(issue => issue.fields.issuetype.name === 'Bug').length;
 
   return (
     <div className="space-y-6">
@@ -155,13 +159,13 @@ export function IncidentRecurrenceTool() {
           <CardHeader>
             <CardTitle>2. Analyze Incidents</CardTitle>
             <CardDescription>
-              Click the button to start the AI analysis on the {issues.length > 0 ? `${issues.length}` : ''} issues from the <span className="font-semibold text-primary">{selectedProject.name}</span> project.
+              Click to analyze the {isIssuesLoading ? '' : `${bugCount} bugs`} from the <span className="font-semibold text-primary">{selectedProject.name}</span> project.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleAnalyze} disabled={isIssuesLoading || isClustering || issues.length === 0}>
+            <Button onClick={handleAnalyze} disabled={isIssuesLoading || isClustering || bugCount === 0}>
               {isIssuesLoading ? <Loader2 className="mr-2 animate-spin" /> : isClustering ? <Loader2 className="mr-2 animate-spin" /> : <Sparkles className="mr-2" />}
-              {isIssuesLoading ? 'Loading Issues...' : isClustering ? 'Analyzing...' : `Analyze ${issues.length} Issues`}
+              {isIssuesLoading ? 'Loading Issues...' : isClustering ? 'Analyzing...' : `Analyze ${bugCount} Bugs`}
             </Button>
           </CardContent>
         </Card>
