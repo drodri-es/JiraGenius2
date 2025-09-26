@@ -1,54 +1,76 @@
 'use server';
 
 /**
- * @fileOverview A Genkit flow for classifying a Jira issue as a Bug or a Feature.
+ * @fileOverview A Genkit flow for classifying a Jira issue and identifying potential root causes.
  *
- * - classifyIssue - A function that takes an issue description and classifies it.
- * - ClassifyIssueInput - The input type for the classifyIssue function.
- * - ClassifyIssueOutput - The return type for the classifyIssue function.
+ * - classifyAndRelateIssue - A function that classifies an issue and relates it to past tasks if it's a bug.
+ * - ClassifyAndRelateIssueInput - The input type for the function.
+ * - ClassifyAndRelateIssueOutput - The return type for the function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-const ClassifyIssueInputSchema = z.object({
-  issueDescription: z.string().describe('The description of the issue to classify.'),
+const IssueContextSchema = z.object({
+    key: z.string(),
+    summary: z.string(),
+    description: z.string(),
+    type: z.string(),
 });
-export type ClassifyIssueInput = z.infer<typeof ClassifyIssueInputSchema>;
 
-const ClassifyIssueOutputSchema = z.object({
+const ClassifyAndRelateIssueInputSchema = z.object({
+  targetIssue: IssueContextSchema.describe('The issue to classify and analyze.'),
+  allIssues: z.array(IssueContextSchema).describe('A list of all other issues in the project for context.'),
+});
+export type ClassifyAndRelateIssueInput = z.infer<typeof ClassifyAndRelateIssueInputSchema>;
+
+const ClassifyAndRelateIssueOutputSchema = z.object({
   classification: z.enum(['Bug', 'Feature']).describe('The classification of the issue, either "Bug" or "Feature".'),
   justification: z.string().describe('A brief justification for the classification decision.'),
+  relatedTaskKey: z.string().optional().describe('If the issue is a bug, the key of a previously implemented task or story that is likely the root cause.'),
+  relationJustification: z.string().optional().describe('A brief justification for why the bug is related to the suggested task.'),
 });
-export type ClassifyIssueOutput = z.infer<typeof ClassifyIssueOutputSchema>;
+export type ClassifyAndRelateIssueOutput = z.infer<typeof ClassifyAndRelateIssueOutputSchema>;
 
-export async function classifyIssue(
-  input: ClassifyIssueInput
-): Promise<ClassifyIssueOutput> {
-  return classifyIssueFlow(input);
+export async function classifyAndRelateIssue(
+  input: ClassifyAndRelateIssueInput
+): Promise<ClassifyAndRelateIssueOutput> {
+  return classifyAndRelateIssueFlow(input);
 }
 
 const prompt = ai.definePrompt({
-  name: 'classifyIssuePrompt',
-  input: { schema: ClassifyIssueInputSchema },
-  output: { schema: ClassifyIssueOutputSchema },
-  prompt: `You are an expert software project manager. Your task is to classify a given issue description as either a 'Bug' or a 'Feature'.
+  name: 'classifyAndRelateIssuePrompt',
+  input: { schema: ClassifyAndRelateIssueInputSchema },
+  output: { schema: ClassifyAndRelateIssueOutputSchema },
+  prompt: `You are an expert software project manager and root cause analysis specialist. Your tasks are to:
+1. Classify an issue as a 'Bug' or a 'Feature'.
+2. If it's a 'Bug', identify a related, previously implemented task or story that might be its root cause.
 
-- A 'Bug' is an error, flaw, or fault in an existing part of the software. It causes the system to produce an incorrect or unexpected result, or to behave in unintended ways. Look for keywords like "error", "doesn't work", "broken", "incorrect", "fails".
-- A 'Feature' is a new piece of functionality or a request for an enhancement to existing functionality. It describes something new the software should do. Look for keywords like "add", "implement", "support", "new capability", "allow users to".
+- A 'Bug' is an error, flaw, or fault. Keywords: "error", "doesn't work", "broken", "incorrect".
+- A 'Feature' is new functionality or an enhancement. Keywords: "add", "implement", "support", "new".
 
-Analyze the following issue description and determine if it is a Bug or a Feature. Provide a brief justification for your choice.
+Current issue to analyze:
+- Key: {{{targetIssue.key}}}
+- Type: {{{targetIssue.type}}}
+- Summary: {{{targetIssue.summary}}}
+- Description: {{{targetIssue.description}}}
 
-Issue Description:
-"{{{issueDescription}}}"
+First, classify the issue and provide a justification.
+
+Then, if and only if the classification is 'Bug', analyze the list of all other project issues provided below. Find the most likely related "Task" or "Story" that was previously implemented and could have caused this bug. The cause is often a recent change. If you find a likely candidate, provide its issue key and a justification for the connection. If no clear connection can be made, do not suggest a related task.
+
+List of all project issues for context:
+{{#each allIssues}}
+- Key: {{{key}}}, Type: {{{type}}}, Summary: {{{summary}}}
+{{/each}}
 `,
 });
 
-const classifyIssueFlow = ai.defineFlow(
+const classifyAndRelateIssueFlow = ai.defineFlow(
   {
-    name: 'classifyIssueFlow',
-    inputSchema: ClassifyIssueInputSchema,
-    outputSchema: ClassifyIssueOutputSchema,
+    name: 'classifyAndRelateIssueFlow',
+    inputSchema: ClassifyAndRelateIssueInputSchema,
+    outputSchema: ClassifyAndRelateIssueOutputSchema,
   },
   async (input) => {
     const { output } = await prompt(input);

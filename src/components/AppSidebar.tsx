@@ -9,7 +9,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat, FilePenLine } from 'lucide-react';
+import { Briefcase, Settings, BotMessageSquare, Github, LayoutDashboard, Layers, Tag, BarChart, Tags, BrainCircuit, Repeat, FilePenLine, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useJiraConnection } from '@/context/JiraConnectionContext';
 import { Button } from './ui/button';
@@ -27,7 +27,7 @@ export function AppSidebar() {
   const aiToolsMenuItems = [
     { href: '/routing', label: 'Routing', icon: BotMessageSquare },
     { href: '/clustering', label: 'Clustering', icon: Layers },
-    { href: '/classification', label: 'Classification', icon: Tag },
+    { href: '/root-cause-analysis', label: 'Root Cause', icon: Search },
     { href: '/tagging', label: 'Tagging', icon: Tags },
     { href: '/capacity-forecast', label: 'Capacity Forecast', icon: BarChart },
     { href: '/incident-recurrence', label: 'Incident Recurrence', icon: Repeat },
